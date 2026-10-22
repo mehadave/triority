@@ -57,36 +57,39 @@ export function TasksScreen() {
           {entry ? `${done} of 3 done` : ' '}
         </p>
 
-        {entry ? (
-          <ul className="mt-6 flex flex-col gap-2.5" aria-label="Today’s priorities">
-            {entry.tasks.map((task, i) => (
-              <TaskRow
-                key={i}
-                task={task}
-                index={i}
-                editable={canEdit}
-                onToggle={canEdit ? () => onToggle(i) : undefined}
-                onEdit={(text) => repo.editTask(today, i, text).then(() => undefined)}
-              />
-            ))}
-          </ul>
-        ) : (
-          loaded && (
-            <div className="mt-8 flex flex-col items-center gap-4 text-center">
-              <p className="text-muted-ink text-[16px]">
-                Pick the three things that would make today feel good.
-              </p>
-              <button
-                type="button"
-                className="btn-sun"
-                onClick={() => openQuestion(true)}
-                disabled={!canEdit}
-              >
-                Choose today’s three
-              </button>
-            </div>
-          )
-        )}
+        {/* Reserve the list's height so nothing shifts while today's data loads. */}
+        <div className="mt-6 min-h-[11.75rem]">
+          {entry ? (
+            <ul className="flex flex-col gap-2.5" aria-label="Today’s priorities">
+              {entry.tasks.map((task, i) => (
+                <TaskRow
+                  key={i}
+                  task={task}
+                  index={i}
+                  editable={canEdit}
+                  onToggle={canEdit ? () => onToggle(i) : undefined}
+                  onEdit={(text) => repo.editTask(today, i, text).then(() => undefined)}
+                />
+              ))}
+            </ul>
+          ) : (
+            loaded && (
+              <div className="flex flex-col items-center gap-4 pt-2 text-center">
+                <p className="text-muted-ink text-[16px]">
+                  Pick the three things that would make today feel good.
+                </p>
+                <button
+                  type="button"
+                  className="btn-sun"
+                  onClick={() => openQuestion(true)}
+                  disabled={!canEdit}
+                >
+                  Choose today’s three
+                </button>
+              </div>
+            )
+          )}
+        </div>
       </div>
     </div>
   );
