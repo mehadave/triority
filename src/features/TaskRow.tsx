@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
+import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
 import { HandCircle, PencilIcon, Tick } from '../components/art';
 import type { Task } from '../domain/types';
 import { TASK_MAX } from '../domain/types';
@@ -18,6 +18,7 @@ export function TaskRow({ task, index, editable, onToggle, onEdit }: TaskRowProp
   const input = useRef<HTMLInputElement>(null);
   // Only animate ticks the user makes, not ones that were already there on load.
   const [touched, setTouched] = useState(false);
+  const press = useRef<{ timer: number; x: number; y: number; fired: boolean } | null>(null);
 
   useEffect(() => {
     if (editing) input.current?.select();
@@ -28,6 +29,30 @@ export function TaskRow({ task, index, editable, onToggle, onEdit }: TaskRowProp
     setError(null);
     setEditing(true);
   };
+
+  const canEdit = editable && Boolean(onEdit);
+
+  // Hold for half a second to edit; the tap that follows is swallowed so it doesn't tick.
+  const cancelPress = () => {
+    if (press.current) window.clearTimeout(press.current.timer);
+  };
+  const onPointerDown = (e: PointerEvent) => {
+    if (!canEdit || e.button !== 0) return;
+    cancelPress();
+    const state = { x: e.clientX, y: e.clientY, fired: false, timer: 0 };
+    state.timer = window.setTimeout(() => {
+      state.fired = true;
+      navigator.vibrate?.(15);
+      startEdit();
+    }, 500);
+    press.current = state;
+  };
+  const onPointerMove = (e: PointerEvent) => {
+    const p = press.current;
+    if (p && Math.hypot(e.clientX - p.x, e.clientY - p.y) > 10) cancelPress();
+  };
+
+  useEffect(() => cancelPress, []);
 
   const save = async () => {
     if (draft.trim() === task.text) return setEditing(false);
@@ -84,7 +109,17 @@ export function TaskRow({ task, index, editable, onToggle, onEdit }: TaskRowProp
         role="checkbox"
         aria-checked={task.done}
         aria-disabled={!onToggle || undefined}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={cancelPress}
+        onPointerCancel={cancelPress}
+        onPointerLeave={cancelPress}
+        onContextMenu={(e) => canEdit && e.preventDefault()}
         onClick={() => {
+          if (press.current?.fired) {
+            press.current = null;
+            return;
+          }
           if (!onToggle) return;
           setTouched(true);
           onToggle();
@@ -105,7 +140,7 @@ export function TaskRow({ task, index, editable, onToggle, onEdit }: TaskRowProp
           </span>
         </span>
       </button>
-      {editable && onEdit && (
+      {canEdit && (
         <button
           type="button"
           onClick={startEdit}
