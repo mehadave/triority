@@ -17,7 +17,8 @@ export class InvalidTasksError extends Error {
 function cleanText(text: string): string {
   const trimmed = text.trim().replace(/\s+/g, ' ');
   if (!trimmed) throw new InvalidTasksError('Every task needs some words.');
-  if (trimmed.length > TASK_MAX) throw new InvalidTasksError(`Keep each task under ${TASK_MAX} characters.`);
+  if (trimmed.length > TASK_MAX)
+    throw new InvalidTasksError(`Keep each task under ${TASK_MAX} characters.`);
   return trimmed;
 }
 
