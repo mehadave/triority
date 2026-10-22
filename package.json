@@ -16,7 +16,8 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "assets:icons": "pwa-assets-generator && node scripts/move-icons.mjs",
-    "assets:images": "node scripts/build-images.mjs"
+    "assets:images": "node scripts/build-images.mjs",
+    "assets:fonts": "node scripts/subset-fonts.mjs"
   },
   "dependencies": {
     "@fontsource/caveat-brush": "^5.3.0",
@@ -54,6 +55,7 @@
     "prettier": "^3.9.10",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "sharp": "^0.35.5",
+    "subset-font": "^2.9.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.72.0",

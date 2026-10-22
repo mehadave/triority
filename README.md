@@ -70,6 +70,7 @@ The app runs as a guest without any environment variables.
 | `npm run typecheck`     | TypeScript only                                                |
 | `npm run assets:images` | Export the sunflower as AVIF/WebP at 256/512/1024 px           |
 | `npm run assets:icons`  | Generate PWA icons and favicons from the app icon              |
+| `npm run assets:fonts`  | Subset the title font to the characters the app uses           |
 
 ### Art assets
 
