@@ -58,7 +58,9 @@ export function computeStreak({ entries, savedDates, today }: StreakInput): {
     ? runEndingOn(today, entries, saved)
     : runEndingOn(addDays(today, -1), entries, saved);
 
-  const keys = [...entries.keys(), ...saved].filter((k) => compareKeys(k, today) <= 0).sort(compareKeys);
+  const keys = [...entries.keys(), ...saved]
+    .filter((k) => compareKeys(k, today) <= 0)
+    .sort(compareKeys);
   let best = 0;
   let run = 0;
   let prev: DateKey | null = null;
@@ -105,10 +107,20 @@ function gapBeforeToday(
 ): { missed: DateKey[]; lastKept: DateKey | null } {
   const missed: DateKey[] = [];
   for (let key = addDays(today, -1); missed.length <= limit; key = addDays(key, -1)) {
-    if (isDayWon(entries.get(key)) || saved.has(key)) return { missed: missed.reverse(), lastKept: key };
+    if (isDayWon(entries.get(key)) || saved.has(key))
+      return { missed: missed.reverse(), lastKept: key };
     missed.push(key);
   }
   return { missed: missed.reverse(), lastKept: null };
+}
+
+function latestWinBefore(entries: EntryIndex, today: DateKey): DateKey | null {
+  let latest: DateKey | null = null;
+  for (const [key, entry] of entries) {
+    if (compareKeys(key, today) < 0 && isDayWon(entry) && (!latest || compareKeys(key, latest) > 0))
+      latest = key;
+  }
+  return latest;
 }
 
 /**
@@ -128,8 +140,12 @@ export function evaluateMissedDays({
   const saved = new Set(state.savedDates);
   const { missed, lastKept } = gapBeforeToday(entries, saved, today, MAX_SAVIORS);
   if (missed.length === 0) return { kind: 'none' };
-  // Gap longer than any bank of saviors: the standing streak ends.
-  if (!lastKept) return { kind: 'reset', missed, streak: state.current };
+  if (!lastKept) {
+    // Gap longer than any bank of saviors. Only a real run before it is worth mentioning.
+    const lastWin = latestWinBefore(entries, today);
+    const streak = lastWin ? runEndingOn(lastWin, entries, saved) : 0;
+    return streak > 0 ? { kind: 'reset', missed, streak } : { kind: 'none' };
+  }
   const streak = runEndingOn(lastKept, entries, saved);
   if (streak === 0) return { kind: 'none' };
   if (missed.length <= state.saviors) {
@@ -180,7 +196,11 @@ export function declineSaviors(state: StreakState): StreakState {
 }
 
 /** Recompute stored numbers after an entry changes. */
-export function refreshStreak(state: StreakState, entries: EntryIndex, today: DateKey): StreakState {
+export function refreshStreak(
+  state: StreakState,
+  entries: EntryIndex,
+  today: DateKey,
+): StreakState {
   const { current, best } = computeStreak({ entries, savedDates: state.savedDates, today });
   // A standing streak stays "standing" while a savior decision is pending.
   const pending = evaluateMissedDays({ entries, state, today }).kind !== 'none';

@@ -9,6 +9,7 @@ import {
   grantMonthlySavior,
   indexEntries,
   isDayWon,
+  refreshStreak,
 } from './streak';
 import { addDays, toDateKey } from './dates';
 import { PastDayError, createDay, editTaskText, toggleTask } from './entries';
@@ -285,7 +286,11 @@ describe('missed days and saviors', () => {
   it('nothing to do when yesterday was won', () => {
     const entries = indexEntries(twelve);
     expect(
-      evaluateMissedDays({ entries, state: state({ current: 12, saviors: 1 }), today: '2026-05-13' }),
+      evaluateMissedDays({
+        entries,
+        state: state({ current: 12, saviors: 1 }),
+        today: '2026-05-13',
+      }),
     ).toEqual({ kind: 'none' });
   });
 
@@ -301,9 +306,14 @@ describe('missed days and saviors', () => {
     expect(used.current).toBe(12);
     // Winning today continues from 12.
     const withToday = indexEntries([...twelve, day('2026-05-14')]);
-    expect(computeStreak({ entries: withToday, savedDates: used.savedDates, today: '2026-05-14' }).current).toBe(13);
+    expect(
+      computeStreak({ entries: withToday, savedDates: used.savedDates, today: '2026-05-14' })
+        .current,
+    ).toBe(13);
     // And the prompt does not come back.
-    expect(evaluateMissedDays({ entries, state: used, today: '2026-05-14' })).toEqual({ kind: 'none' });
+    expect(evaluateMissedDays({ entries, state: used, today: '2026-05-14' })).toEqual({
+      kind: 'none',
+    });
   });
 
   it('two missed days with 2 saviors: offers both', () => {
@@ -363,7 +373,9 @@ describe('missed days and saviors', () => {
     expect(evaluateMissedDays({ entries, state: declined, today: '2026-05-14' })).toEqual({
       kind: 'none',
     });
-    expect(computeStreak({ entries, savedDates: declined.savedDates, today: '2026-05-14' }).current).toBe(0);
+    expect(
+      computeStreak({ entries, savedDates: declined.savedDates, today: '2026-05-14' }).current,
+    ).toBe(0);
   });
 
   it('never asks when the streak was already zero', () => {
@@ -376,8 +388,32 @@ describe('missed days and saviors', () => {
   it('does not ask once today is already won', () => {
     const entries = indexEntries([...twelve, day('2026-05-14')]);
     expect(
-      evaluateMissedDays({ entries, state: state({ current: 12, saviors: 1 }), today: '2026-05-14' }),
+      evaluateMissedDays({
+        entries,
+        state: state({ current: 12, saviors: 1 }),
+        today: '2026-05-14',
+      }),
     ).toEqual({ kind: 'none' });
+  });
+
+  it('unticking today’s only win never triggers a missed-day prompt', () => {
+    const won = indexEntries([day('2026-05-14')]);
+    const s = refreshStreak(state(), won, '2026-05-14');
+    expect(s.current).toBe(1);
+    const unticked = indexEntries([day('2026-05-14', [true, true, false])]);
+    const after = refreshStreak(s, unticked, '2026-05-14');
+    expect(after.current).toBe(0);
+    expect(evaluateMissedDays({ entries: unticked, state: s, today: '2026-05-14' })).toEqual({
+      kind: 'none',
+    });
+  });
+
+  it('unticking today keeps the streak through yesterday', () => {
+    const entries = indexEntries([...twelve, day('2026-05-13')]);
+    const s = refreshStreak(state(), entries, '2026-05-13');
+    expect(s.current).toBe(13);
+    const unticked = indexEntries([...twelve, day('2026-05-13', [true, false, false])]);
+    expect(refreshStreak(s, unticked, '2026-05-13').current).toBe(12);
   });
 
   it('a partial missed day still counts as missed', () => {
@@ -405,8 +441,12 @@ describe('missed days and saviors', () => {
   it('rejects saving today or a future day', () => {
     const entries = indexEntries(twelve);
     const s = state({ current: 12, saviors: 2 });
-    expect(() => applySaviors({ entries, state: s, dates: ['2026-05-14'], today: '2026-05-14' })).toThrow();
-    expect(() => applySaviors({ entries, state: s, dates: ['2026-05-20'], today: '2026-05-14' })).toThrow();
+    expect(() =>
+      applySaviors({ entries, state: s, dates: ['2026-05-14'], today: '2026-05-14' }),
+    ).toThrow();
+    expect(() =>
+      applySaviors({ entries, state: s, dates: ['2026-05-20'], today: '2026-05-14' }),
+    ).toThrow();
   });
 
   it('rejects using more saviors than banked', () => {
@@ -435,7 +475,10 @@ describe('missed days and saviors', () => {
 
   it('a missed day across a month boundary can be saved', () => {
     const entries = indexEntries(wonRange('2026-04-20', 11)); // ends Apr 30
-    const s = grantMonthlySavior(state({ current: 11, saviors: 0, lastSaviorGrantMonth: '2026-04' }), '2026-05-02');
+    const s = grantMonthlySavior(
+      state({ current: 11, saviors: 0, lastSaviorGrantMonth: '2026-04' }),
+      '2026-05-02',
+    );
     expect(s.saviors).toBe(1);
     expect(evaluateMissedDays({ entries, state: s, today: '2026-05-02' })).toEqual({
       kind: 'offer',
