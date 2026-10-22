@@ -1,11 +1,11 @@
-import { format } from 'date-fns';
+import { lightFormat } from 'date-fns';
 import type { DateKey } from './types';
 
 const KEY_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 /** Device-local calendar date of `date`. */
 export function toDateKey(date: Date): DateKey {
-  return format(date, 'yyyy-MM-dd');
+  return lightFormat(date, 'yyyy-MM-dd');
 }
 
 export function todayKey(): DateKey {
