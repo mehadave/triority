@@ -1,21 +1,22 @@
 @import 'tailwindcss';
 
-/* Metric-matched local fallbacks so text doesn't jump when the web fonts land. */
+/* Local fallbacks sized to the web fonts' measured metrics (vs Arial), so text doesn't shift
+   when Lexend and Caveat Brush finish loading. */
 @font-face {
   font-family: 'Lexend Fallback';
-  src: local('Arial'), local('Helvetica Neue'), local('Helvetica');
-  size-adjust: 108%;
-  ascent-override: 92%;
-  descent-override: 23%;
+  src: local('Arial'), local('ArialMT');
+  size-adjust: 109.91%;
+  ascent-override: 90.98%;
+  descent-override: 22.74%;
   line-gap-override: 0%;
 }
 
 @font-face {
   font-family: 'Caveat Brush Fallback';
-  src: local('Marker Felt'), local('Comic Sans MS'), local('Arial');
-  size-adjust: 88%;
-  ascent-override: 105%;
-  descent-override: 30%;
+  src: local('Arial'), local('ArialMT');
+  size-adjust: 79.41%;
+  ascent-override: 120.9%;
+  descent-override: 37.78%;
   line-gap-override: 0%;
 }
 
