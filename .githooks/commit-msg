@@ -1,0 +1,10 @@
+#!/bin/sh
+# Blocks tool attribution trailers and auto-generated footers in commit messages.
+msg_file="$1"
+pattern='[c]laude|[a]nthropic|co-authored-[b]y|generated[ ]with|ai-[g]enerated|\xF0\x9F\xA4\x96'
+if grep -Eiq "$pattern" "$msg_file"; then
+  echo "commit-msg: message contains a blocked attribution term. Please reword it." >&2
+  grep -Ein "$pattern" "$msg_file" >&2
+  exit 1
+fi
+exit 0
