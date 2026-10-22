@@ -16,8 +16,8 @@ export default defineConfig({
       injectRegister: false,
       includeAssets: [
         'favicon.ico',
-        'favicon-16x16.png',
-        'favicon-32x32.png',
+        'pwa-16x16.png',
+        'pwa-32x32.png',
         'apple-touch-icon-180x180.png',
       ],
       manifest: {
