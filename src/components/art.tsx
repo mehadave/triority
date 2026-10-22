@@ -38,7 +38,11 @@ export function HandCircle({
           strokeWidth={2.4}
           initial={{ pathLength: 0, opacity: 0 }}
           animate={{ pathLength: 1, opacity: 1 }}
-          transition={{ duration: 0.45, ease: 'easeInOut', delay }}
+          // Round caps leave a dot at length 0, so stay hidden until the stroke starts.
+          transition={{
+            pathLength: { duration: 0.45, ease: 'easeInOut', delay },
+            opacity: { duration: 0.01, delay },
+          }}
         />
       ) : (
         <path d={d} {...ink} strokeWidth={2.4} />
@@ -69,9 +73,12 @@ export function Tick({
         d={TICK_PATH}
         {...ink}
         strokeWidth={3.2}
-        initial={animate ? { pathLength: 0 } : false}
-        animate={{ pathLength: 1 }}
-        transition={{ duration: 0.35, ease: [0.3, 0.6, 0.35, 1], delay }}
+        initial={animate ? { pathLength: 0, opacity: 0 } : false}
+        animate={{ pathLength: 1, opacity: 1 }}
+        transition={{
+          pathLength: { duration: 0.35, ease: [0.3, 0.6, 0.35, 1], delay },
+          opacity: { duration: 0.01, delay },
+        }}
       />
     </svg>
   );
