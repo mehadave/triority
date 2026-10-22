@@ -8,11 +8,19 @@ export default tseslint.config(
   { ignores: ['dist', 'dev-dist', 'coverage', 'playwright-report', 'test-results'] },
   {
     files: ['**/*.{ts,tsx}'],
-    extends: [js.configs.recommended, ...tseslint.configs.recommended, jsxA11y.flatConfigs.recommended],
+    extends: [
+      js.configs.recommended,
+      ...tseslint.configs.recommended,
+      jsxA11y.flatConfigs.recommended,
+    ],
     languageOptions: { ecmaVersion: 2023, globals: globals.browser },
     plugins: { 'react-hooks': reactHooks },
     rules: {
       ...reactHooks.configs.recommended.rules,
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_', destructuredArrayIgnorePattern: '^_' },
+      ],
       'no-restricted-syntax': [
         'error',
         {

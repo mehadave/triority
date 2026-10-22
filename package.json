@@ -15,7 +15,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "assets:icons": "pwa-assets-generator",
+    "assets:icons": "pwa-assets-generator && node scripts/move-icons.mjs",
     "assets:images": "node scripts/build-images.mjs"
   },
   "dependencies": {
