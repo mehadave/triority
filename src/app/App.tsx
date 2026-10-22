@@ -1,7 +1,6 @@
 import { Suspense, useEffect } from 'react';
 import { Outlet } from 'react-router';
 import { GlassNav } from '../components/GlassNav';
-import { Loader } from '../components/Loader';
 import { LiveRegion, Toast } from '../components/Announcer';
 import { OfflineNote } from '../components/OfflineNote';
 import { DayStart } from '../features/DayStart';
@@ -42,7 +41,6 @@ export function App() {
       <Celebration />
       <Toast />
       <LiveRegion />
-      <Loader />
     </>
   );
 }

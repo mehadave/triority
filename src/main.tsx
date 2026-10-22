@@ -4,7 +4,6 @@ import { BrowserRouter, Route, Routes } from 'react-router';
 import { LazyMotion, MotionConfig } from 'motion/react';
 import '@fontsource/lexend/latin-400.css';
 import '@fontsource/lexend/latin-500.css';
-import '@fontsource/caveat-brush/latin-400.css';
 import './styles/index.css';
 import { App } from './app/App';
 import { AuthScreen, CalScreen, ExtrasScreen } from './app/routes';
@@ -14,6 +13,7 @@ import { DataProvider } from './data/DataProvider';
 import { DayProvider } from './data/DayProvider';
 import { bootSession } from './data/session';
 import { registerServiceWorker } from './pwa';
+import { dismissSplash } from './lib/splash';
 
 bootSession();
 
@@ -44,4 +44,5 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>,
 );
 
+dismissSplash();
 registerServiceWorker();
