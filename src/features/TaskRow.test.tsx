@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { LazyMotion, domMax } from 'motion/react';
 import { describe, expect, it, vi } from 'vitest';
@@ -35,6 +35,28 @@ describe('TaskRow', () => {
     await user.keyboard(' ');
     await user.keyboard('{Enter}');
     expect(onToggle).toHaveBeenCalledTimes(2);
+  });
+
+  it('long-press opens the editor without ticking', () => {
+    vi.useFakeTimers();
+    const onToggle = renderRow(false);
+    const box = screen.getByRole('checkbox');
+    fireEvent.pointerDown(box, { button: 0, clientX: 10, clientY: 10 });
+    act(() => vi.advanceTimersByTime(600));
+    fireEvent.pointerUp(box);
+    fireEvent.click(box);
+    expect(onToggle).not.toHaveBeenCalled();
+    expect(screen.getByLabelText('Edit priority 1')).toHaveValue('Write the intro');
+    vi.useRealTimers();
+  });
+
+  it('a quick tap still ticks', () => {
+    const onToggle = renderRow(false);
+    const box = screen.getByRole('checkbox');
+    fireEvent.pointerDown(box, { button: 0 });
+    fireEvent.pointerUp(box);
+    fireEvent.click(box);
+    expect(onToggle).toHaveBeenCalledTimes(1);
   });
 
   it('offers an edit button for today', () => {
