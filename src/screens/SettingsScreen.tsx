@@ -1,5 +1,5 @@
 import { PageHeader } from '../components/PageHeader';
-import { formatDistanceToNowStrict } from 'date-fns';
+import { format, formatDistanceToNowStrict } from 'date-fns';
 import { useEffect, useRef, useState, type ChangeEvent, type ReactNode } from 'react';
 import { Dialog } from '../components/Dialog';
 import { useData } from '../data/DataProvider';
@@ -18,9 +18,10 @@ import {
   useLastBackup,
 } from '../lib/device';
 import { useUi } from '../state/ui';
+import { Link } from 'react-router';
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
-  const id = `extras-${title.toLowerCase().replace(/\W+/g, '-')}`;
+  const id = `settings-${title.toLowerCase().replace(/\W+/g, '-')}`;
   return (
     <section aria-labelledby={id} className="border-hairline border-b py-6 last:border-b-0">
       <h2 id={id} className="text-muted-ink mb-3 text-[14px] font-medium tracking-wide uppercase">
@@ -39,7 +40,7 @@ function backupSummary(data: ExportData): string {
   return `${n} day${n === 1 ? '' : 's'}, from ${first} to ${last}.`;
 }
 
-export function ExtrasScreen() {
+export function SettingsScreen() {
   const { repo } = useData();
   const { settings, today, entries } = useDay();
   const toast = useUi((s) => s.showToast);
@@ -126,7 +127,7 @@ export function ExtrasScreen() {
 
   return (
     <div className="flex flex-1 flex-col pb-4">
-      <PageHeader title="Extras" />
+      <PageHeader title="Settings" />
       <div className="mx-auto mt-1 w-full max-w-md">
         <Section title="Your data">
           <p className="text-[16px]">
@@ -134,7 +135,7 @@ export function ExtrasScreen() {
           </p>
           <p className={`mt-2 text-[14px] ${due ? 'font-medium' : 'text-muted-ink'}`}>
             {lastBackup
-              ? `Last backup: ${formatDistanceToNowStrict(new Date(lastBackup), { addSuffix: true })}`
+              ? `Backed up until ${format(new Date(lastBackup), 'MMMM d, yyyy')} (${formatDistanceToNowStrict(new Date(lastBackup), { addSuffix: true })}).`
               : 'No backup yet.'}
             {due && ' Time for a fresh one.'}
           </p>
@@ -219,6 +220,9 @@ export function ExtrasScreen() {
             Triority: three priorities, every day. Finish all three and the day is won. Small,
             steady promises kept to yourself.
           </p>
+          <Link to="/about" className="mt-2 inline-block text-[15px] underline underline-offset-4">
+            More about Triority
+          </Link>
           <p className="text-muted-ink mt-2 text-[13px]">Version {__APP_VERSION__}</p>
         </Section>
 
@@ -297,4 +301,4 @@ export function ExtrasScreen() {
   );
 }
 
-export default ExtrasScreen;
+export default SettingsScreen;

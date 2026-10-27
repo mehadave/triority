@@ -16,7 +16,7 @@ export function App() {
     const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 1500));
     idle(() => {
       prefetchRoute('/cal');
-      prefetchRoute('/extras');
+      prefetchRoute('/settings');
     });
   }, []);
 
@@ -28,7 +28,7 @@ export function App() {
       >
         Skip to content
       </a>
-      <GlassNav streak={streak.current} extrasBadge={isBackupDue(entries.size, lastBackup)} />
+      <GlassNav streak={streak.current} settingsBadge={isBackupDue(entries.size, lastBackup)} />
       <main
         id="main"
         className="mx-auto flex min-h-dvh w-full max-w-xl flex-col px-5 pt-[max(0.75rem,env(safe-area-inset-top))] pb-[calc(110px+env(safe-area-inset-bottom))] md:pt-24 md:pb-12"

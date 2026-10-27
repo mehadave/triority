@@ -38,9 +38,15 @@
   --hairline: rgba(26, 26, 26, 0.12);
   --scrim: rgba(255, 251, 234, 0.72);
 
-  --glass-bg: rgba(255, 255, 255, 0.18);
+  --glass-bg: rgba(255, 255, 255, 0.28);
   --glass-border: rgba(255, 255, 255, 0.6);
   --glass-highlight: rgba(255, 255, 255, 0.7);
+
+  --note-yellow: #ffe27a;
+  --note-pink: #f9c6d6;
+  --note-mint: #bfe6d2;
+  --note-sky: #c9dcf5;
+  --note-lilac: #e3d4f5;
 
   color-scheme: light;
 }
@@ -99,6 +105,36 @@
     line-height: 1.05;
     text-align: center;
     font-weight: 400;
+  }
+
+  /* The promise line: plain and light, never more than two lines. */
+  .promise {
+    font-weight: 400;
+    font-style: italic;
+    font-size: clamp(1rem, 4.4vw, 1.1875rem);
+    line-height: 1.35;
+    letter-spacing: -0.005em;
+    text-wrap: balance;
+  }
+
+  /* A taped-down sticky note. Colour and tilt are set inline per note. */
+  .note {
+    position: relative;
+    padding: 1rem 0.8rem 0.8rem;
+    border-radius: 2px 2px 10px 2px;
+    box-shadow: 0 2px 6px rgba(26, 26, 26, 0.08);
+  }
+
+  .note-tape {
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    width: 50px;
+    height: 15px;
+    margin-left: -25px;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(26, 26, 26, 0.1);
+    transform: rotate(-2deg);
   }
 
   /* Screen titles: compact, left-aligned, sitting on the same row as the streak. */

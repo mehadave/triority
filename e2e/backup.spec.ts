@@ -11,7 +11,7 @@ test('back up, wipe the device, then restore from the file', async ({ page }) =>
   await sheet.getByRole('button', { name: 'Let’s go' }).click();
   await page.getByRole('checkbox', { name: 'Stretch' }).click();
 
-  await page.getByRole('link', { name: 'Extras' }).click();
+  await page.getByRole('link', { name: 'Settings' }).click();
   await expect(page.getByText('No backup yet.')).toBeVisible();
   const [download] = await Promise.all([
     page.waitForEvent('download'),
@@ -19,7 +19,7 @@ test('back up, wipe the device, then restore from the file', async ({ page }) =>
   ]);
   expect(download.suggestedFilename()).toMatch(/^triority-backup-\d{4}-\d{2}-\d{2}\.json$/);
   const file = await download.path();
-  await expect(page.getByText(/Last backup:/)).toBeVisible();
+  await expect(page.getByText(/Backed up until/)).toBeVisible();
 
   await page.getByRole('button', { name: 'Delete all my data' }).click();
   await page
@@ -44,7 +44,7 @@ test('back up, wipe the device, then restore from the file', async ({ page }) =>
 });
 
 test('a file that is not a backup is refused without changing anything', async ({ page }) => {
-  await page.goto('/extras');
+  await page.goto('/settings');
   await page.locator('input[type="file"]').setInputFiles({
     name: 'notes.json',
     mimeType: 'application/json',

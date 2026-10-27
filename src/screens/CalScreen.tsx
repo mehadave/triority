@@ -1,7 +1,8 @@
 import { PageHeader } from '../components/PageHeader';
 import { format } from 'date-fns';
 import { useMemo, useState } from 'react';
-import { ChevronIcon, HollowDay, MiniSunflower, Tick, HandCircle } from '../components/art';
+import { ChevronIcon, HollowDay, Tick, HandCircle } from '../components/art';
+import { PressedFlower, PressedFlowerDefs } from '../components/PressedFlower';
 import { Sheet } from '../components/Sheet';
 import { useDay } from '../data/DayProvider';
 import { compareKeys, daysInMonth, monthOf, weekdayIndex } from '../domain/dates';
@@ -53,6 +54,7 @@ export function CalScreen() {
   return (
     <div className="flex flex-1 flex-col items-center pb-4">
       <PageHeader title="Cal" />
+      <PressedFlowerDefs />
 
       <dl className="mt-4 grid w-full max-w-md grid-cols-3 gap-2 text-center">
         <div className="border-ink rounded-2xl border-2 px-2 py-3">
@@ -128,9 +130,8 @@ export function CalScreen() {
                     >
                       {Number(key.slice(8))}
                     </span>
-                    <span className="mt-1 h-5 w-5">
-                      {kind === 'won' && <MiniSunflower filled />}
-                      {kind === 'saved' && <MiniSunflower filled={false} saved />}
+                    <span className="mt-0.5 h-7 w-6">
+                      {kind === 'won' && <PressedFlower dateKey={key} />}
                       {kind === 'partial' && <HollowDay />}
                     </span>
                   </button>
@@ -145,16 +146,10 @@ export function CalScreen() {
           aria-label="Legend"
         >
           <li className="flex items-center gap-1.5">
-            <span className="h-4 w-4">
-              <MiniSunflower filled />
+            <span className="h-5 w-4">
+              <PressedFlower dateKey="legend-won" />
             </span>
             Won
-          </li>
-          <li className="flex items-center gap-1.5">
-            <span className="h-4 w-4">
-              <MiniSunflower filled={false} saved />
-            </span>
-            Saved
           </li>
           <li className="flex items-center gap-1.5">
             <span className="h-4 w-4">
