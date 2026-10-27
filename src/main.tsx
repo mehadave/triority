@@ -13,6 +13,7 @@ import { DataProvider } from './data/DataProvider';
 import { DayProvider } from './data/DayProvider';
 import { registerServiceWorker } from './pwa';
 import { dismissSplash } from './lib/splash';
+import { captureInstallPrompt } from './lib/device';
 
 const loadMotionFeatures = () => import('./lib/motionFeatures').then((mod) => mod.default);
 
@@ -40,5 +41,6 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>,
 );
 
+captureInstallPrompt();
 dismissSplash();
 registerServiceWorker();

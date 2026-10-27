@@ -4,6 +4,7 @@ import { useData } from '../data/DataProvider';
 import { useDay } from '../data/DayProvider';
 import { TASK_MAX } from '../domain/types';
 import { useUi } from '../state/ui';
+import { requestPersistentStorage } from '../lib/device';
 
 const PLACEHOLDERS = ['The big one', 'One step forward', 'Something for you'];
 
@@ -25,6 +26,8 @@ export function DailyQuestionSheet({ open, onClose }: { open: boolean; onClose: 
     setError(null);
     try {
       await repo.createDay(today, texts);
+      // A good moment to ask the browser to keep this data: the user just committed to something.
+      void requestPersistentStorage();
       setTexts(['', '', '']);
       announce('Three things set for today. 0 of 3 done.');
       onClose();
