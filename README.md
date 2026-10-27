@@ -2,6 +2,8 @@
 
 Pick **three things** each day that would make you feel productive. Tick all three and the day is won, and your streak grows. Miss a day and a monthly _savior_ can keep the streak alive.
 
+Live at **[triority.vercel.app](https://triority.vercel.app)**.
+
 Triority is a small installable web app (PWA) with a handmade sketchbook look: cream paper, black ink, hand-drawn circles and a crochet sunflower that grows as you finish your tasks.
 
 - No account needed. Everything is stored on the device (IndexedDB) and works fully offline.
@@ -52,21 +54,21 @@ npm run dev
 
 ### Scripts
 
-| Command                 | What it does                                                   |
-| ----------------------- | -------------------------------------------------------------- |
-| `npm run dev`           | Start the dev server                                           |
-| `npm run build`         | Type-check, build, and fail if first-load JS exceeds 160 KB gz |
-| `npm test`              | Unit and component tests                                       |
-| `npm run test:e2e`      | Playwright flows (builds and serves the app)                   |
-| `npm run lint`          | ESLint                                                         |
-| `npm run typecheck`     | TypeScript only                                                |
-| `npm run assets:images` | Export the sunflower as AVIF/WebP at 256/512/1024 px           |
-| `npm run assets:icons`  | Generate PWA icons and favicons from the app icon              |
-| `npm run assets:fonts`  | Subset the title font to the characters the app uses           |
+| Command                 | What it does                                                         |
+| ----------------------- | -------------------------------------------------------------------- |
+| `npm run dev`           | Start the dev server                                                 |
+| `npm run build`         | Type-check, build, and fail if first-load JS exceeds 160 KB gz       |
+| `npm test`              | Unit and component tests                                             |
+| `npm run test:e2e`      | Playwright flows (builds and serves the app)                         |
+| `npm run lint`          | ESLint                                                               |
+| `npm run typecheck`     | TypeScript only                                                      |
+| `npm run assets:images` | Export the sunflower as AVIF/WebP at 256/512/1024 px                 |
+| `npm run assets:icons`  | Generate PWA icons, plus tab-sized favicons cropped to the sunflower |
+| `npm run assets:fonts`  | Subset the title font to the characters the app uses                 |
 
 ### Art assets
 
-Source art lives in `assets-src/` (`sunflower_crochet_hd.png`, `triority_icon.png`). Run `npm run assets:images` and `npm run assets:icons` after changing either; the generated files in `public/` are committed. The full-size PNGs are never served.
+Source art lives in `assets-src/` (`sunflower_crochet_hd.png`, `triority_icon.png`). Run `npm run assets:images` and `npm run assets:icons` after changing either; the generated files in `public/` are committed. The full-size PNGs are never served. Home-screen icons use the full design; browser-tab favicons (16/32/48 px) use just the sunflower so they stay readable.
 
 ## Your data
 
