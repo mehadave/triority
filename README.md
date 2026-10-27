@@ -4,59 +4,51 @@ Pick **three things** each day that would make you feel productive. Tick all thr
 
 Triority is a small installable web app (PWA) with a handmade sketchbook look: cream paper, black ink, hand-drawn circles and a crochet sunflower that grows as you finish your tasks.
 
-- Works fully offline as a guest; data stays in the browser (IndexedDB).
-- Optional account to keep history across devices. Guest history is moved into the account on first sign-in.
-- Streaks are computed by pure TypeScript functions on the client and by Postgres functions on the server, so signed-in streaks cannot be edited from the browser.
+- No account needed. Everything is stored on the device (IndexedDB) and works fully offline.
+- **Back up and restore** from Extras as a JSON file. Restoring can merge with what's on the device or replace it, and every file is validated before anything changes.
+- The app asks the browser for persistent storage and nudges for a fresh backup every couple of weeks.
 
 ## Stack
 
-| Layer        | Choice                                                        |
-| ------------ | ------------------------------------------------------------- |
-| UI           | React 19, TypeScript (strict), Vite                           |
-| Routing      | React Router 7                                                |
-| Styling      | Tailwind CSS 4, colours as CSS variables                      |
-| Animation    | Motion (`LazyMotion` + `m`), SVG stroke animations            |
-| Fonts        | Caveat Brush and Lexend, self-hosted via `@fontsource`        |
-| State        | Zustand                                                       |
-| Guest data   | Dexie (IndexedDB) + `useLiveQuery`                            |
-| Account data | Supabase (Postgres + Auth) through TanStack Query             |
-| Validation   | Zod (`zod/mini`) on the client, constraints and checks in SQL |
-| Dates        | `date-fns`, every day keyed as a local `yyyy-MM-dd` string    |
-| PWA          | `vite-plugin-pwa` (Workbox), app-shell precache               |
-| Tests        | Vitest + Testing Library, Playwright, SQL behaviour tests     |
-| Hosting      | Vercel + Supabase                                             |
+| Layer      | Choice                                                     |
+| ---------- | ---------------------------------------------------------- |
+| UI         | React 19, TypeScript (strict), Vite                        |
+| Routing    | React Router 7                                             |
+| Styling    | Tailwind CSS 4, colours as CSS variables                   |
+| Animation  | Motion (`LazyMotion` + `m`), SVG stroke animations         |
+| Fonts      | Caveat Brush and Lexend, self-hosted                       |
+| State      | Zustand                                                    |
+| Data       | Dexie (IndexedDB) + `useLiveQuery`                         |
+| Validation | Zod (`zod/mini`)                                           |
+| Dates      | `date-fns`, every day keyed as a local `yyyy-MM-dd` string |
+| PWA        | `vite-plugin-pwa` (Workbox), app-shell precache            |
+| Tests      | Vitest + Testing Library, Playwright                       |
+| Hosting    | Vercel                                                     |
 
 ## Project layout
 
 ```
 src/
-  domain/        pure logic: dates, entries, streak + savior rules, schemas
+  domain/        pure logic: dates, entries, streak + savior rules, backups, schemas
   data/          EntriesRepository interface
-    local/       Dexie implementation (guests)
-    remote/      Supabase implementation (lazy-loaded, signed-in users)
+    local/       Dexie implementation
   features/      daily question, celebration, task rows, growing sunflower
-  screens/       Tasks, Affirm, Cal, Extras, Auth
+  screens/       Tasks, Affirm, Cal, Extras
   components/    glass nav, sheets, dialogs, hand-drawn SVG art
-supabase/
-  migrations/    schema, row level security, streak functions
-  tests/         SQL behaviour tests (run against any Postgres)
 e2e/             Playwright flows
-scripts/         image export, icon move, bundle size check
+scripts/         image, icon and font asset builds, bundle size check
 ```
 
-UI code never imports Dexie or Supabase directly; it talks to `EntriesRepository` (an ESLint rule enforces this).
+UI code never imports Dexie directly; it talks to `EntriesRepository` (an ESLint rule enforces this). That keeps the door open for a synced implementation later without touching the screens. A server-backed version (Supabase, with row level security and server-side streak checks) lives on the `feat/accounts` branch.
 
 ## Running locally
 
-Requires Node 20+.
+Requires Node 20+. No environment variables are needed.
 
 ```bash
 npm install
-cp .env.example .env   # optional: only needed for accounts
 npm run dev
 ```
-
-The app runs as a guest without any environment variables.
 
 ### Scripts
 
@@ -65,7 +57,7 @@ The app runs as a guest without any environment variables.
 | `npm run dev`           | Start the dev server                                           |
 | `npm run build`         | Type-check, build, and fail if first-load JS exceeds 160 KB gz |
 | `npm test`              | Unit and component tests                                       |
-| `npm run test:e2e`      | Playwright flow (builds and serves the app)                    |
+| `npm run test:e2e`      | Playwright flows (builds and serves the app)                   |
 | `npm run lint`          | ESLint                                                         |
 | `npm run typecheck`     | TypeScript only                                                |
 | `npm run assets:images` | Export the sunflower as AVIF/WebP at 256/512/1024 px           |
@@ -76,42 +68,11 @@ The app runs as a guest without any environment variables.
 
 Source art lives in `assets-src/` (`sunflower_crochet_hd.png`, `triority_icon.png`). Run `npm run assets:images` and `npm run assets:icons` after changing either; the generated files in `public/` are committed. The full-size PNGs are never served.
 
-## Environment variables
+## Your data
 
-| Name                      | Purpose                                   |
-| ------------------------- | ----------------------------------------- |
-| `VITE_SUPABASE_URL`       | Supabase project URL                      |
-| `VITE_SUPABASE_ANON_KEY`  | Supabase anon (public) key                |
-| `VITE_TURNSTILE_SITE_KEY` | Cloudflare Turnstile site key for sign-up |
-
-Only the anon key ever goes to the client. The service-role key is not used anywhere in this project.
-
-## Supabase setup
-
-1. Create a project and apply the migrations, either with the CLI:
-
-   ```bash
-   npx supabase link --project-ref <your-ref>
-   npx supabase db push
-   ```
-
-   or by pasting `supabase/migrations/*.sql` into the SQL editor in order.
-
-2. In **Authentication → Providers**, enable Email (with "Confirm email" on) and Google.
-3. In **Authentication → Attack Protection**, enable CAPTCHA with Turnstile and add the secret key. Keep the default rate limits on.
-4. In **Authentication → URL Configuration**, set the site URL and add `<site>/auth` as a redirect URL.
-5. Update the `connect-src` entry of the Content Security Policy in `vercel.json` to your project URL.
-
-### Database tests
-
-The SQL tests run against any local Postgres (14+), using a small stand-in for Supabase's `auth` schema:
-
-```bash
-createdb triority_test
-cd supabase/tests
-psql -d triority_test -v ON_ERROR_STOP=1 \
-  -f local_auth_stub.sql -f ../migrations/20261022000000_init.sql -f streak_rules.sql
-```
+- Stored in this browser's IndexedDB. Nothing is sent anywhere: no accounts, analytics or trackers.
+- **Back up now** downloads `triority-backup-<date>.json`. **Restore from backup** checks the file (format, version, task limits, no duplicate or future days) and then either merges or replaces. Streaks are recomputed rather than trusted from the file, and a backup can never add saviors.
+- Browsers may clear site data under storage pressure, and Safari may clear it after a week without a visit unless the app is installed. Installing the app and keeping a recent backup protects against both.
 
 ## Streak rules
 
@@ -124,7 +85,7 @@ psql -d triority_test -v ON_ERROR_STOP=1 \
 
 ## Deployment
 
-The app deploys to Vercel as a static Vite build. `vercel.json` sets the SPA rewrite, long-lived caching for hashed assets, and security headers (CSP, HSTS, `nosniff`, referrer and permissions policies, `frame-ancestors 'none'`).
+The app deploys to Vercel as a static Vite build. `vercel.json` sets the SPA rewrite, long-lived caching for hashed assets, and security headers: a strict same-origin CSP, HSTS, `nosniff`, referrer and permissions policies, and `frame-ancestors 'none'`.
 
 ## Licence
 

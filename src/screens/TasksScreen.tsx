@@ -1,5 +1,4 @@
 import { startTransition, useOptimistic } from 'react';
-import { useCanEdit } from '../components/OfflineNote';
 import { useData } from '../data/DataProvider';
 import { useDay } from '../data/DayProvider';
 import { doneCount, toggleTask } from '../domain/entries';
@@ -13,7 +12,6 @@ import { useUi } from '../state/ui';
 export function TasksScreen() {
   const { repo } = useData();
   const { loaded, today, todayEntry } = useDay();
-  const canEdit = useCanEdit();
   const announce = useUi((s) => s.announce);
   const setCelebrating = useUi((s) => s.setCelebrating);
   const openQuestion = useUi((s) => s.setDailyQuestionOpen);
@@ -66,8 +64,8 @@ export function TasksScreen() {
                   key={i}
                   task={task}
                   index={i}
-                  editable={canEdit}
-                  onToggle={canEdit ? () => onToggle(i) : undefined}
+                  editable
+                  onToggle={() => onToggle(i)}
                   onEdit={(text) => repo.editTask(today, i, text).then(() => undefined)}
                 />
               ))}
@@ -78,12 +76,7 @@ export function TasksScreen() {
                 <p className="text-muted-ink text-[16px]">
                   Pick the three things that would make today feel good.
                 </p>
-                <button
-                  type="button"
-                  className="btn-sun"
-                  onClick={() => openQuestion(true)}
-                  disabled={!canEdit}
-                >
+                <button type="button" className="btn-sun" onClick={() => openQuestion(true)}>
                   Choose today’s three
                 </button>
               </div>

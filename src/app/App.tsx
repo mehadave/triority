@@ -2,14 +2,15 @@ import { Suspense, useEffect } from 'react';
 import { Outlet } from 'react-router';
 import { GlassNav } from '../components/GlassNav';
 import { LiveRegion, Toast } from '../components/Announcer';
-import { OfflineNote } from '../components/OfflineNote';
 import { DayStart } from '../features/DayStart';
 import { Celebration } from '../features/Celebration';
 import { useDay } from '../data/DayProvider';
 import { prefetchRoute } from './routes';
+import { isBackupDue, useLastBackup } from '../lib/device';
 
 export function App() {
-  const { streak } = useDay();
+  const { streak, entries } = useDay();
+  const lastBackup = useLastBackup();
 
   useEffect(() => {
     const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 1500));
@@ -27,8 +28,7 @@ export function App() {
       >
         Skip to content
       </a>
-      <GlassNav streak={streak.current} />
-      <OfflineNote />
+      <GlassNav streak={streak.current} extrasBadge={isBackupDue(entries.size, lastBackup)} />
       <main
         id="main"
         className="mx-auto flex min-h-dvh w-full max-w-xl flex-col px-5 pt-16 pb-[calc(110px+env(safe-area-inset-bottom))] md:pt-28 md:pb-12"

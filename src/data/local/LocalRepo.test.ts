@@ -101,3 +101,34 @@ describe('LocalRepo', () => {
     expect(await repo.hasData()).toBe(false);
   });
 });
+
+describe('LocalRepo backups', () => {
+  it('restores an export into a fresh device', async () => {
+    const source = freshRepo();
+    for (let i = 0; i < 3; i++) await winDay(source, addDays('2026-05-01', i));
+    await source.updateSettings({ customAffirmations: [{ id: 'a', text: 'I keep my word.' }] });
+    const data = await source.exportAll();
+
+    const target = freshRepo();
+    await target.importBackup(data, 'replace', '2026-05-04');
+    expect((await target.listEntries()).map((e) => e.date)).toEqual([
+      '2026-05-01',
+      '2026-05-02',
+      '2026-05-03',
+    ]);
+    expect((await target.getStreakState()).current).toBe(3);
+    expect((await target.getSettings()).customAffirmations).toHaveLength(1);
+  });
+
+  it('merges a backup with what is already there', async () => {
+    const source = freshRepo();
+    await winDay(source, '2026-05-01');
+    const data = await source.exportAll();
+
+    const target = freshRepo();
+    await winDay(target, '2026-05-02');
+    await target.importBackup(data, 'merge', '2026-05-03');
+    expect((await target.listEntries()).map((e) => e.date)).toEqual(['2026-05-01', '2026-05-02']);
+    expect((await target.getStreakState()).current).toBe(2);
+  });
+});

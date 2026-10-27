@@ -12,7 +12,13 @@ const TABS = [
   { to: '/extras', label: 'Extras', Icon: ExtrasIcon },
 ] as const;
 
-export function GlassNav({ streak }: { streak: number }) {
+export function GlassNav({
+  streak,
+  extrasBadge = false,
+}: {
+  streak: number;
+  extrasBadge?: boolean;
+}) {
   const { pathname } = useLocation();
   return (
     <>
@@ -49,8 +55,21 @@ export function GlassNav({ streak }: { streak: number }) {
                       aria-hidden="true"
                     />
                   )}
-                  <Icon className="relative" />
-                  <span className="relative">{label}</span>
+                  <span className="relative">
+                    <Icon />
+                    {to === '/extras' && extrasBadge && (
+                      <span
+                        className="bg-ink ring-paper absolute -top-0.5 -right-1 h-2.5 w-2.5 rounded-full ring-2"
+                        aria-hidden="true"
+                      />
+                    )}
+                  </span>
+                  <span className="relative">
+                    {label}
+                    {to === '/extras' && extrasBadge && (
+                      <span className="sr-only"> (backup due)</span>
+                    )}
+                  </span>
                 </NavLink>
               </li>
             );

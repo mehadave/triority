@@ -36,10 +36,7 @@ export default tseslint.config(
       'no-restricted-imports': [
         'error',
         {
-          paths: [
-            { name: 'dexie', message: 'Use the repository layer.' },
-            { name: '@supabase/supabase-js', message: 'Use the repository layer.' },
-          ],
+          paths: [{ name: 'dexie', message: 'Use the repository layer.' }],
         },
       ],
     },

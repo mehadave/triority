@@ -1,10 +1,11 @@
 import type { MissedDays } from '../domain/streak';
 import type { DateKey, DayEntry, StreakState } from '../domain/types';
 import type { ExportData, Settings } from '../domain/schema';
+import type { ImportMode } from '../domain/backup';
 
 /**
- * Everything the UI needs from storage. Guests get the IndexedDB implementation,
- * signed-in users get the server-backed one. UI code only ever talks to this.
+ * Everything the UI needs from storage. Today that's IndexedDB on the device; a synced
+ * implementation can be added later without touching the UI, which only talks to this.
  */
 export interface EntriesRepository {
   readonly kind: 'local' | 'remote';
@@ -25,6 +26,8 @@ export interface EntriesRepository {
   updateSettings(patch: Partial<Settings>): Promise<Settings>;
 
   exportAll(): Promise<ExportData>;
+  /** Apply an already-parsed backup, replacing or merging with what's here. */
+  importBackup(data: ExportData, mode: ImportMode, today: DateKey): Promise<void>;
   deleteAll(): Promise<void>;
 }
 

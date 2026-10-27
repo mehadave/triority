@@ -1,10 +1,9 @@
-import { createContext, useContext, useMemo, type ReactNode } from 'react';
-import { useAuth } from '../state/auth';
+import { createContext, useContext, type ReactNode } from 'react';
 import type { DataHooks, EntriesRepository } from './repository';
 import { createLocalHooks, LocalRepo } from './local/LocalRepo';
 
 export const localRepo = new LocalRepo();
-const localHooks = createLocalHooks(localRepo);
+const value: DataContextValue = { repo: localRepo, hooks: createLocalHooks(localRepo) };
 
 interface DataContextValue {
   repo: EntriesRepository;
@@ -13,21 +12,9 @@ interface DataContextValue {
 
 const DataContext = createContext<DataContextValue | null>(null);
 
+/** Everything lives on this device for now; a synced repository can slot in here later. */
 export function DataProvider({ children }: { children: ReactNode }) {
-  const session = useAuth((s) => s.session);
-  const value = useMemo<DataContextValue>(
-    () =>
-      session
-        ? { repo: session.repo, hooks: session.hooks }
-        : { repo: localRepo, hooks: localHooks },
-    [session],
-  );
-  // Keyed so switching between guest and account storage remounts the data hooks cleanly.
-  return (
-    <DataContext.Provider value={value} key={session ? `remote:${session.user.id}` : 'local'}>
-      {children}
-    </DataContext.Provider>
-  );
+  return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
 }
 
 export function useData(): DataContextValue {
