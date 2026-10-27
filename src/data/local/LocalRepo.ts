@@ -1,3 +1,4 @@
+import { combineBackup, type ImportMode } from '../../domain/backup';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { createDay, editTaskText, toggleTask } from '../../domain/entries';
 import {
@@ -132,6 +133,27 @@ export class LocalRepo implements EntriesRepository {
       streak,
       settings,
     };
+  }
+
+  async importBackup(data: ExportData, mode: ImportMode, today: DateKey): Promise<void> {
+    const { day_entries, streak_state, settings } = this.db;
+    await this.db.transaction('rw', day_entries, streak_state, settings, async () => {
+      const [entries, streak, current] = await Promise.all([
+        this.listEntries(),
+        this.getStreakState(),
+        this.getSettings(),
+      ]);
+      const next = combineBackup({
+        current: { entries, streak, settings: current },
+        incoming: data,
+        mode,
+        today,
+      });
+      await Promise.all([day_entries.clear(), streak_state.clear(), settings.clear()]);
+      await day_entries.bulkPut(next.entries);
+      await streak_state.put({ ...next.streak, id: SINGLETON });
+      await settings.put({ ...settingsSchema.parse(next.settings), id: SINGLETON });
+    });
   }
 
   async deleteAll(): Promise<void> {
