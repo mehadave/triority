@@ -95,10 +95,25 @@
 @layer components {
   .title {
     font-family: var(--font-display);
-    font-size: clamp(2.5rem, 9vw, 2.875rem);
+    font-size: clamp(2.125rem, 8vw, 2.5rem);
     line-height: 1.05;
     text-align: center;
     font-weight: 400;
+  }
+
+  /* Screen titles: compact, left-aligned, sitting on the same row as the streak. */
+  .page-title {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    line-height: 1.1;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+  }
+
+  @media (min-width: 768px) {
+    .page-title {
+      font-size: 2.25rem;
+    }
   }
 
   .glass {

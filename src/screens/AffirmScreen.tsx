@@ -1,3 +1,4 @@
+import { PageHeader } from '../components/PageHeader';
 import { useState, type FormEvent } from 'react';
 import { PencilIcon, TrashIcon } from '../components/art';
 import { PROMISE_LINE, affirmationFor } from '../content/affirmations';
@@ -44,12 +45,12 @@ export function AffirmScreen() {
   };
 
   return (
-    <div className="flex flex-1 flex-col items-center py-4">
-      <h1 className="title">Affirm</h1>
-      <p className="font-display mt-8 max-w-sm text-center text-[34px] leading-tight">
+    <div className="flex flex-1 flex-col items-center pb-4">
+      <PageHeader title="Affirm" />
+      <p className="font-display mt-6 max-w-sm text-center text-[34px] leading-tight">
         {PROMISE_LINE}
       </p>
-      <p className="mt-6 max-w-sm text-center text-[18px]">{affirmationFor(today)}</p>
+      <p className="mt-4 max-w-sm text-center text-[18px]">{affirmationFor(today)}</p>
 
       <section aria-labelledby="mine" className="mt-12 w-full max-w-md">
         <h2 id="mine" className="text-muted-ink text-[14px] font-medium tracking-wide uppercase">

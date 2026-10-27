@@ -8,7 +8,7 @@ export function GrowingSunflower({ done, ready }: { done: number; ready: boolean
   const stage = Math.max(0, Math.min(3, done));
   // The box is always reserved so nothing shifts; art appears once data is in.
   return (
-    <div className="relative mx-auto h-40 w-40 md:h-44 md:w-44" aria-hidden="true">
+    <div className="relative mx-auto h-32 w-32 md:h-40 md:w-40" aria-hidden="true">
       {ready && (
         <AnimatePresence initial={false}>
           {stage < 3 ? (
