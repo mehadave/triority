@@ -31,7 +31,7 @@ export function App() {
       <GlassNav streak={streak.current} extrasBadge={isBackupDue(entries.size, lastBackup)} />
       <main
         id="main"
-        className="mx-auto flex min-h-dvh w-full max-w-xl flex-col px-5 pt-16 pb-[calc(110px+env(safe-area-inset-bottom))] md:pt-28 md:pb-12"
+        className="mx-auto flex min-h-dvh w-full max-w-xl flex-col px-5 pt-[max(0.75rem,env(safe-area-inset-top))] pb-[calc(110px+env(safe-area-inset-bottom))] md:pt-24 md:pb-12"
       >
         <Suspense fallback={<div className="flex-1" />}>
           <Outlet />

@@ -22,9 +22,6 @@ export function GlassNav({
   const { pathname } = useLocation();
   return (
     <>
-      <div className="fixed top-[max(0.5rem,env(safe-area-inset-top))] right-3 z-40 md:hidden">
-        <StreakBadge value={streak} />
-      </div>
       <nav
         aria-label="Main"
         className="glass fixed inset-x-3 bottom-[calc(12px+env(safe-area-inset-bottom))] z-40 rounded-[24px] px-1.5 py-1.5 md:inset-x-4 md:top-3 md:bottom-auto md:flex md:items-center md:justify-between md:px-4"

@@ -1,3 +1,4 @@
+import { PageHeader } from '../components/PageHeader';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { useEffect, useRef, useState, type ChangeEvent, type ReactNode } from 'react';
 import { Dialog } from '../components/Dialog';
@@ -124,9 +125,9 @@ export function ExtrasScreen() {
   };
 
   return (
-    <div className="flex flex-1 flex-col py-4">
-      <h1 className="title">Extras</h1>
-      <div className="mx-auto mt-4 w-full max-w-md">
+    <div className="flex flex-1 flex-col pb-4">
+      <PageHeader title="Extras" />
+      <div className="mx-auto mt-1 w-full max-w-md">
         <Section title="Your data">
           <p className="text-[16px]">
             Everything is stored on this device only. Back it up now and then so it’s never lost.

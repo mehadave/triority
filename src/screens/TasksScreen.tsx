@@ -1,3 +1,4 @@
+import { PageHeader } from '../components/PageHeader';
 import { startTransition, useOptimistic } from 'react';
 import { useData } from '../data/DataProvider';
 import { useDay } from '../data/DayProvider';
@@ -8,6 +9,17 @@ import { GrowingSunflower } from '../features/GrowingSunflower';
 import { TaskRow } from '../features/TaskRow';
 import { haptic } from '../lib/motion';
 import { useUi } from '../state/ui';
+
+const dayFormat = new Intl.DateTimeFormat(undefined, {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+});
+
+function longToday(key: string): string {
+  const [y, m, d] = key.split('-').map(Number) as [number, number, number];
+  return dayFormat.format(new Date(y, m - 1, d));
+}
 
 export function TasksScreen() {
   const { repo } = useData();
@@ -47,41 +59,44 @@ export function TasksScreen() {
   };
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center py-4">
-      <div className="w-full max-w-md">
-        <GrowingSunflower done={done} ready={loaded} />
-        <h1 className="title mt-3">You got this</h1>
-        <p className="text-muted-ink mt-1 text-center text-[14px]" aria-hidden={!entry}>
-          {entry ? `${done} of 3 done` : ' '}
-        </p>
+    <div className="flex flex-1 flex-col pb-4">
+      <PageHeader eyebrow={longToday(today)} />
+      <div className="flex flex-1 items-center justify-center">
+        <div className="w-full max-w-md">
+          <GrowingSunflower done={done} ready={loaded} />
+          <h1 className="title mt-2">You got this</h1>
+          <p className="text-muted-ink mt-1 text-center text-[14px]" aria-hidden={!entry}>
+            {entry ? `${done} of 3 done` : ' '}
+          </p>
 
-        {/* Reserve the list's height so nothing shifts while today's data loads. */}
-        <div className="mt-6 min-h-[11.75rem]">
-          {entry ? (
-            <ul className="flex flex-col gap-2.5" aria-label="Today’s priorities">
-              {entry.tasks.map((task, i) => (
-                <TaskRow
-                  key={i}
-                  task={task}
-                  index={i}
-                  editable
-                  onToggle={() => onToggle(i)}
-                  onEdit={(text) => repo.editTask(today, i, text).then(() => undefined)}
-                />
-              ))}
-            </ul>
-          ) : (
-            loaded && (
-              <div className="flex flex-col items-center gap-4 pt-2 text-center">
-                <p className="text-muted-ink text-[16px]">
-                  Pick the three things that would make today feel good.
-                </p>
-                <button type="button" className="btn-sun" onClick={() => openQuestion(true)}>
-                  Choose today’s three
-                </button>
-              </div>
-            )
-          )}
+          {/* Reserve the list's height so nothing shifts while today's data loads. */}
+          <div className="mt-6 min-h-[11.75rem]">
+            {entry ? (
+              <ul className="flex flex-col gap-2.5" aria-label="Today’s priorities">
+                {entry.tasks.map((task, i) => (
+                  <TaskRow
+                    key={i}
+                    task={task}
+                    index={i}
+                    editable
+                    onToggle={() => onToggle(i)}
+                    onEdit={(text) => repo.editTask(today, i, text).then(() => undefined)}
+                  />
+                ))}
+              </ul>
+            ) : (
+              loaded && (
+                <div className="flex flex-col items-center gap-4 pt-2 text-center">
+                  <p className="text-muted-ink text-[16px]">
+                    Pick the three things that would make today feel good.
+                  </p>
+                  <button type="button" className="btn-sun" onClick={() => openQuestion(true)}>
+                    Choose today’s three
+                  </button>
+                </div>
+              )
+            )}
+          </div>
         </div>
       </div>
     </div>

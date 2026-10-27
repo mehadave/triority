@@ -1,3 +1,4 @@
+import { PageHeader } from '../components/PageHeader';
 import { format } from 'date-fns';
 import { useMemo, useState } from 'react';
 import { ChevronIcon, HollowDay, MiniSunflower, Tick, HandCircle } from '../components/art';
@@ -50,10 +51,10 @@ export function CalScreen() {
   const selectedEntry: DayEntry | undefined = selected ? entries.get(selected) : undefined;
 
   return (
-    <div className="flex flex-1 flex-col items-center py-4">
-      <h1 className="title">Cal</h1>
+    <div className="flex flex-1 flex-col items-center pb-4">
+      <PageHeader title="Cal" />
 
-      <dl className="mt-6 grid w-full max-w-md grid-cols-3 gap-2 text-center">
+      <dl className="mt-4 grid w-full max-w-md grid-cols-3 gap-2 text-center">
         <div className="border-ink rounded-2xl border-2 px-2 py-3">
           <dt className="text-muted-ink text-[13px]">Current streak</dt>
           <dd className="text-[22px] font-medium tabular-nums">{streak.current}</dd>
@@ -70,7 +71,7 @@ export function CalScreen() {
         </div>
       </dl>
 
-      <section className="mt-8 w-full max-w-md" aria-labelledby="month-label">
+      <section className="mt-6 w-full max-w-md" aria-labelledby="month-label">
         <div className="mb-3 flex items-center justify-between">
           <button
             type="button"
