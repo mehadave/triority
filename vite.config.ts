@@ -43,7 +43,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        // App shell only. Account code and the larger images load on demand.
+        // App shell only. The larger sunflower image loads on demand.
         globPatterns: [
           '**/*.{js,css,html,woff2}',
           'img/sunflower-256.*',
@@ -51,9 +51,7 @@ export default defineConfig({
           '*.png',
           '*.ico',
         ],
-        globIgnores: ['**/remote-*.js', '**/AuthScreen-*.js'],
         navigateFallback: '/index.html',
-        navigateFallbackDenylist: [/^\/auth\/callback/],
         cleanupOutdatedCaches: true,
       },
     }),

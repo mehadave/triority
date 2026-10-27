@@ -1,6 +1,5 @@
 import { useState, type FormEvent } from 'react';
 import { PencilIcon, TrashIcon } from '../components/art';
-import { useCanEdit } from '../components/OfflineNote';
 import { PROMISE_LINE, affirmationFor } from '../content/affirmations';
 import { useData } from '../data/DataProvider';
 import { useDay } from '../data/DayProvider';
@@ -14,7 +13,6 @@ function newId(): string {
 export function AffirmScreen() {
   const { repo } = useData();
   const { today, settings } = useDay();
-  const canEdit = useCanEdit();
   const list = settings?.customAffirmations ?? [];
   const [draft, setDraft] = useState('');
   const [editing, setEditing] = useState<{ id: string; text: string } | null>(null);
@@ -87,31 +85,29 @@ export function AffirmScreen() {
             ) : (
               <li key={a.id} className="border-hairline flex items-center gap-1 border-b py-1">
                 <p className="flex-1 py-2 text-[16px] break-words">{a.text}</p>
-                {canEdit && (
-                  <>
-                    <button
-                      type="button"
-                      className="text-muted-ink flex h-11 w-11 items-center justify-center rounded-full"
-                      aria-label={`Edit “${a.text}”`}
-                      onClick={() => setEditing({ id: a.id, text: a.text })}
-                    >
-                      <PencilIcon />
-                    </button>
-                    <button
-                      type="button"
-                      className="text-muted-ink flex h-11 w-11 items-center justify-center rounded-full"
-                      aria-label={`Delete “${a.text}”`}
-                      onClick={() => void save(list.filter((x) => x.id !== a.id))}
-                    >
-                      <TrashIcon />
-                    </button>
-                  </>
-                )}
+                <>
+                  <button
+                    type="button"
+                    className="text-muted-ink flex h-11 w-11 items-center justify-center rounded-full"
+                    aria-label={`Edit “${a.text}”`}
+                    onClick={() => setEditing({ id: a.id, text: a.text })}
+                  >
+                    <PencilIcon />
+                  </button>
+                  <button
+                    type="button"
+                    className="text-muted-ink flex h-11 w-11 items-center justify-center rounded-full"
+                    aria-label={`Delete “${a.text}”`}
+                    onClick={() => void save(list.filter((x) => x.id !== a.id))}
+                  >
+                    <TrashIcon />
+                  </button>
+                </>
               </li>
             ),
           )}
         </ul>
-        {canEdit && list.length < MAX_CUSTOM_AFFIRMATIONS && (
+        {list.length < MAX_CUSTOM_AFFIRMATIONS && (
           <form onSubmit={add} className="mt-4 flex items-end gap-3">
             <label className="flex-1">
               <span className="sr-only">New affirmation</span>

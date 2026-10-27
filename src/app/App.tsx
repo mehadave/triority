@@ -2,7 +2,6 @@ import { Suspense, useEffect } from 'react';
 import { Outlet } from 'react-router';
 import { GlassNav } from '../components/GlassNav';
 import { LiveRegion, Toast } from '../components/Announcer';
-import { OfflineNote } from '../components/OfflineNote';
 import { DayStart } from '../features/DayStart';
 import { Celebration } from '../features/Celebration';
 import { useDay } from '../data/DayProvider';
@@ -28,7 +27,6 @@ export function App() {
         Skip to content
       </a>
       <GlassNav streak={streak.current} />
-      <OfflineNote />
       <main
         id="main"
         className="mx-auto flex min-h-dvh w-full max-w-xl flex-col px-5 pt-16 pb-[calc(110px+env(safe-area-inset-bottom))] md:pt-28 md:pb-12"
