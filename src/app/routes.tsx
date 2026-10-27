@@ -2,11 +2,13 @@ import { lazy } from 'react';
 
 const loaders = {
   '/cal': () => import('../screens/CalScreen'),
-  '/extras': () => import('../screens/ExtrasScreen'),
+  '/settings': () => import('../screens/SettingsScreen'),
+  '/about': () => import('../screens/AboutScreen'),
 } as const;
 
 export const CalScreen = lazy(loaders['/cal']);
-export const ExtrasScreen = lazy(loaders['/extras']);
+export const SettingsScreen = lazy(loaders['/settings']);
+export const AboutScreen = lazy(loaders['/about']);
 
 const started = new Set<string>();
 

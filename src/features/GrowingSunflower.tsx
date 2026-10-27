@@ -26,15 +26,24 @@ export function GrowingSunflower({ done, ready }: { done: number; ready: boolean
             <m.div
               key="bloom"
               className="absolute inset-0"
-              initial={{ opacity: 0, scale: 0.4, rotate: -25 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={softSpring}
             >
-              <SunflowerPhoto
-                sizes="(min-width: 768px) 176px, 160px"
-                className="h-full w-full object-contain"
-              />
+              <GrowthStage stage={3} />
+              {/* Sits on the stem top in the 120-unit art box: x 32–88, y 6–62. */}
+              <m.div
+                className="absolute top-[5%] left-[26.67%] h-[46.67%] w-[46.67%]"
+                initial={{ opacity: 0, scale: 0.3, rotate: -25 }}
+                animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                transition={{ ...softSpring, delay: 0.15 }}
+              >
+                <SunflowerPhoto
+                  sizes="(min-width: 768px) 80px, 64px"
+                  className="h-full w-full object-contain"
+                />
+              </m.div>
             </m.div>
           )}
         </AnimatePresence>

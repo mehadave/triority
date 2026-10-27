@@ -7,7 +7,7 @@ Live at **[triority.vercel.app](https://triority.vercel.app)**.
 Triority is a small installable web app (PWA) with a handmade sketchbook look: cream paper, black ink, hand-drawn circles and a crochet sunflower that grows as you finish your tasks.
 
 - No account needed. Everything is stored on the device (IndexedDB) and works fully offline.
-- **Back up and restore** from Extras as a JSON file. Restoring can merge with what's on the device or replace it, and every file is validated before anything changes.
+- **Back up and restore** from Settings as a JSON file. Restoring can merge with what's on the device or replace it, and every file is validated before anything changes.
 - The app asks the browser for persistent storage and nudges for a fresh backup every couple of weeks.
 
 ## Stack
@@ -35,7 +35,7 @@ src/
   data/          EntriesRepository interface
     local/       Dexie implementation
   features/      daily question, celebration, task rows, growing sunflower
-  screens/       Tasks, Affirm, Cal, Extras
+  screens/       Tasks, Affirm, Cal, Settings, About
   components/    glass nav, sheets, dialogs, hand-drawn SVG art
 e2e/             Playwright flows
 scripts/         image, icon and font asset builds, bundle size check

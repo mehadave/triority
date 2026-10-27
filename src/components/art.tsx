@@ -109,7 +109,7 @@ function Leaf({ d }: { d: string }) {
   );
 }
 
-export function GrowthStage({ stage }: { stage: 0 | 1 | 2 }) {
+export function GrowthStage({ stage }: { stage: 0 | 1 | 2 | 3 }) {
   return (
     <svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true" focusable="false">
       {stage === 0 && (
@@ -149,12 +149,20 @@ export function GrowthStage({ stage }: { stage: 0 | 1 | 2 }) {
           />
         </>
       )}
+      {/* Full grown: a shorter stem with room on top for the crochet bloom. */}
+      {stage === 3 && (
+        <>
+          <path d="M60 86C61 76 59 66 60.4 56" {...ink} strokeWidth={2.4} />
+          <Leaf d="M60.4 77C50.6 79.4 42.8 74.4 40.4 66.4C49.8 64.6 58 68.6 60.4 77Z" />
+          <Leaf d="M60.6 68C67.4 60.6 76.6 59.6 82.6 63C78.4 70.8 69 73 60.6 68Z" />
+        </>
+      )}
       {soil}
     </svg>
   );
 }
 
-export function MiniSunflower({ filled, saved = false }: { filled: boolean; saved?: boolean }) {
+export function MiniSunflower({ filled }: { filled: boolean }) {
   const petals = Array.from({ length: 8 }, (_, i) => i * 45);
   return (
     <svg viewBox="0 0 24 24" width="100%" height="100%" aria-hidden="true" focusable="false">
@@ -179,17 +187,6 @@ export function MiniSunflower({ filled, saved = false }: { filled: boolean; save
         stroke="var(--ink)"
         strokeWidth="1.2"
       />
-      {saved && (
-        <g>
-          <circle cx="18.6" cy="18.6" r="4.6" fill="var(--ink)" />
-          <path
-            d="M18.6 16.4v4.4M16.4 18.6h4.4"
-            stroke="var(--paper)"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-        </g>
-      )}
     </svg>
   );
 }
@@ -258,10 +255,19 @@ export function CalIcon(props: IconProps) {
   );
 }
 
-export function ExtrasIcon(props: IconProps) {
+export function SettingsIcon(props: IconProps) {
   return (
     <svg {...iconBase} {...props}>
-      <path d="M5.4 12h.1M12 12.1h.1M18.6 11.9h.1" {...ink} strokeWidth={3.4} />
+      <path
+        d="M10.6 3.6H13.4L14 6.2L16.3 7.5L18.8 6.7L20.2 9.1L18.3 10.9V13.4L20.1 15.2L18.7 17.6L16.2 16.8L14 18.1L13.3 20.6H10.5L9.9 18L7.7 16.7L5.2 17.5L3.8 15.1L5.7 13.3V10.8L3.9 9L5.3 6.6L7.8 7.4L10 6.1Z"
+        {...ink}
+        strokeWidth={1.8}
+      />
+      <path
+        d="M12.1 9.2C13.8 9.3 14.9 10.6 14.8 12.2C14.7 13.8 13.4 14.9 11.9 14.8C10.3 14.7 9.2 13.4 9.3 11.9C9.4 10.4 10.6 9.2 12.3 9.3"
+        {...ink}
+        strokeWidth={1.8}
+      />
     </svg>
   );
 }

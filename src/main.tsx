@@ -1,12 +1,12 @@
-import { StrictMode } from 'react';
+import { StrictMode, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter, Route, Routes } from 'react-router';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 import { LazyMotion, MotionConfig } from 'motion/react';
 import '@fontsource/lexend/latin-400.css';
 import '@fontsource/lexend/latin-500.css';
 import './styles/index.css';
 import { App } from './app/App';
-import { CalScreen, ExtrasScreen } from './app/routes';
+import { AboutScreen, CalScreen, SettingsScreen } from './app/routes';
 import { TasksScreen } from './screens/TasksScreen';
 import { AffirmScreen } from './screens/AffirmScreen';
 import { DataProvider } from './data/DataProvider';
@@ -25,11 +25,20 @@ createRoot(document.getElementById('root')!).render(
           <DataProvider>
             <DayProvider>
               <Routes>
+                <Route
+                  path="about"
+                  element={
+                    <Suspense fallback={null}>
+                      <AboutScreen />
+                    </Suspense>
+                  }
+                />
                 <Route element={<App />}>
                   <Route index element={<TasksScreen />} />
                   <Route path="affirm" element={<AffirmScreen />} />
                   <Route path="cal" element={<CalScreen />} />
-                  <Route path="extras" element={<ExtrasScreen />} />
+                  <Route path="settings" element={<SettingsScreen />} />
+                  <Route path="extras" element={<Navigate to="/settings" replace />} />
                   <Route path="*" element={<TasksScreen />} />
                 </Route>
               </Routes>

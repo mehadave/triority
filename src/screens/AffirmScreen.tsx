@@ -1,11 +1,23 @@
 import { PageHeader } from '../components/PageHeader';
 import { useState, type FormEvent } from 'react';
 import { PencilIcon, TrashIcon } from '../components/art';
-import { PROMISE_LINE, affirmationFor } from '../content/affirmations';
+import { PROMISE_LINE } from '../content/affirmations';
 import { useData } from '../data/DataProvider';
 import { useDay } from '../data/DayProvider';
 import { AFFIRMATION_MAX, MAX_CUSTOM_AFFIRMATIONS } from '../domain/types';
 import type { Affirmation } from '../domain/schema';
+
+// Sticky-note colours and tilts, picked by position so each note keeps its look.
+const NOTE_COLORS = [
+  'var(--note-yellow)',
+  'var(--note-pink)',
+  'var(--note-mint)',
+  'var(--note-sky)',
+  'var(--note-lilac)',
+];
+const NOTE_TILTS = [-2, 1.8, -0.8, 1.5, -1.6, 1.1];
+/** Longer lines get a full-width note so they stay easy to read. */
+const LONG_NOTE = 40;
 
 function newId(): string {
   return crypto.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -13,7 +25,7 @@ function newId(): string {
 
 export function AffirmScreen() {
   const { repo } = useData();
-  const { today, settings } = useDay();
+  const { settings } = useDay();
   const list = settings?.customAffirmations ?? [];
   const [draft, setDraft] = useState('');
   const [editing, setEditing] = useState<{ id: string; text: string } | null>(null);
@@ -47,12 +59,11 @@ export function AffirmScreen() {
   return (
     <div className="flex flex-1 flex-col items-center pb-4">
       <PageHeader title="Affirm" />
-      <p className="font-display mt-6 max-w-sm text-center text-[34px] leading-tight">
-        {PROMISE_LINE}
-      </p>
-      <p className="mt-4 max-w-sm text-center text-[18px]">{affirmationFor(today)}</p>
+      <div className="mt-6 w-full max-w-md">
+        <p className="promise">{PROMISE_LINE}</p>
+      </div>
 
-      <section aria-labelledby="mine" className="mt-12 w-full max-w-md">
+      <section aria-labelledby="mine" className="mt-6 w-full max-w-md">
         <h2 id="mine" className="text-muted-ink text-[14px] font-medium tracking-wide uppercase">
           Your affirmations
         </h2>
@@ -61,52 +72,64 @@ export function AffirmScreen() {
             Write a line you’d like to hear more often.
           </p>
         )}
-        <ul className="mt-3 flex flex-col gap-1">
-          {list.map((a) =>
-            editing?.id === a.id ? (
-              <li key={a.id}>
-                <label className="sr-only" htmlFor={`aff-${a.id}`}>
-                  Edit affirmation
-                </label>
-                <input
-                  id={`aff-${a.id}`}
-                  className="ink-input"
-                  // eslint-disable-next-line jsx-a11y/no-autofocus
-                  autoFocus
-                  value={editing.text}
-                  maxLength={AFFIRMATION_MAX}
-                  onChange={(e) => setEditing({ id: a.id, text: e.target.value })}
-                  onBlur={() => void commitEdit()}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') void commitEdit();
-                    if (e.key === 'Escape') setEditing(null);
-                  }}
-                />
-              </li>
-            ) : (
-              <li key={a.id} className="border-hairline flex items-center gap-1 border-b py-1">
-                <p className="flex-1 py-2 text-[16px] break-words">{a.text}</p>
+        <ul className="mt-5 grid grid-cols-2 items-start gap-x-3.5 gap-y-5">
+          {list.map((a, i) => (
+            <li
+              key={a.id}
+              className={`note ${a.text.length > LONG_NOTE ? 'col-span-2' : ''}`}
+              style={{
+                background: NOTE_COLORS[i % NOTE_COLORS.length],
+                transform: `rotate(${NOTE_TILTS[i % NOTE_TILTS.length]}deg)`,
+              }}
+            >
+              <span className="note-tape" aria-hidden="true" />
+              {editing?.id === a.id ? (
                 <>
-                  <button
-                    type="button"
-                    className="text-muted-ink flex h-11 w-11 items-center justify-center rounded-full"
-                    aria-label={`Edit “${a.text}”`}
-                    onClick={() => setEditing({ id: a.id, text: a.text })}
-                  >
-                    <PencilIcon />
-                  </button>
-                  <button
-                    type="button"
-                    className="text-muted-ink flex h-11 w-11 items-center justify-center rounded-full"
-                    aria-label={`Delete “${a.text}”`}
-                    onClick={() => void save(list.filter((x) => x.id !== a.id))}
-                  >
-                    <TrashIcon />
-                  </button>
+                  <label className="sr-only" htmlFor={`aff-${a.id}`}>
+                    Edit affirmation
+                  </label>
+                  <textarea
+                    id={`aff-${a.id}`}
+                    className="w-full resize-none bg-transparent text-[14px] leading-snug outline-none"
+                    rows={3}
+                    // eslint-disable-next-line jsx-a11y/no-autofocus
+                    autoFocus
+                    value={editing.text}
+                    maxLength={AFFIRMATION_MAX}
+                    onChange={(e) => setEditing({ id: a.id, text: e.target.value })}
+                    onBlur={() => void commitEdit()}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        void commitEdit();
+                      }
+                      if (e.key === 'Escape') setEditing(null);
+                    }}
+                  />
                 </>
-              </li>
-            ),
-          )}
+              ) : (
+                <p className="text-[14px] leading-snug break-words">{a.text}</p>
+              )}
+              <div className="-mr-2 -mb-2 flex justify-end">
+                <button
+                  type="button"
+                  className="text-muted-ink flex h-9 w-9 items-center justify-center rounded-full"
+                  aria-label={`Edit “${a.text}”`}
+                  onClick={() => setEditing({ id: a.id, text: a.text })}
+                >
+                  <PencilIcon width={16} height={16} />
+                </button>
+                <button
+                  type="button"
+                  className="text-muted-ink flex h-9 w-9 items-center justify-center rounded-full"
+                  aria-label={`Delete “${a.text}”`}
+                  onClick={() => void save(list.filter((x) => x.id !== a.id))}
+                >
+                  <TrashIcon width={16} height={16} />
+                </button>
+              </div>
+            </li>
+          ))}
         </ul>
         {list.length < MAX_CUSTOM_AFFIRMATIONS && (
           <form onSubmit={add} className="mt-4 flex items-end gap-3">
