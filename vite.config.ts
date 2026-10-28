@@ -53,6 +53,10 @@ export default defineConfig({
         ],
         navigateFallback: '/index.html',
         cleanupOutdatedCaches: true,
+        // Take over as soon as a new version installs, so an update shows on the next open
+        // instead of waiting for every tab and the installed app to be closed.
+        skipWaiting: true,
+        clientsClaim: true,
       },
     }),
   ],
