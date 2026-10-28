@@ -61,7 +61,7 @@ export function TasksScreen() {
   return (
     <div className="flex flex-1 flex-col pb-4">
       <PageHeader />
-      <div className="flex flex-1 items-center justify-center">
+      <div className="flex flex-1 items-start justify-center pt-2 md:pt-4">
         <div className="w-full max-w-md">
           <p className="text-muted-ink mb-2 text-center text-[14px] font-medium">
             {longToday(today)}
