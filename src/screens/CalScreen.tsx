@@ -77,7 +77,7 @@ export function CalScreen() {
         <div className="mb-3 flex items-center justify-between">
           <button
             type="button"
-            className="flex h-11 w-11 items-center justify-center rounded-full"
+            className="-ml-2.5 flex h-11 w-11 items-center justify-center rounded-full"
             onClick={() => setMonth((m) => shiftMonth(m, -1))}
             aria-label="Previous month"
           >
@@ -88,7 +88,7 @@ export function CalScreen() {
           </h2>
           <button
             type="button"
-            className="flex h-11 w-11 items-center justify-center rounded-full disabled:opacity-30"
+            className="-mr-2.5 flex h-11 w-11 items-center justify-center rounded-full disabled:opacity-30"
             onClick={() => setMonth((m) => shiftMonth(m, 1))}
             disabled={atCurrent}
             aria-label="Next month"
